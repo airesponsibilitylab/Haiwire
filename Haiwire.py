@@ -1,29 +1,49 @@
-from math import random
+import random
 import time
 import csv
 
 def init():
 	#read incidents
-	incidentsDict = {}
+	incidentsList = []
 	with open ('Incidents.csv', mode='r') as incidentRead:
 		incidentReader = csv.DictReader(incidentRead)
 		for row in incidentReader:
-			incidentID = row["Incident ID"]
-			#deckID = row["General Deck ID"] #probably dont need
-			incidentTitle = row["Card Title"]
-			incidentDescription = row["Card Wording"]
+			incidentsDict = {}
+			incidentsDict["Incident ID"] = row["General Deck ID"]
+			incidentsDict["Incident Title"] = row["Card Title"]
+			incidentsDict["Incident Description"] = row["Card Wording"]
+			incidentsDict["Incident Tech"] = row["AI Stack"]
+			incidentsDict["Incident Domain"] = row["Domain"]
+			incidentsDict["Incident Harm"] = row["Harm"]
+			incidentsDict['Played'] = False
+			incidentsDict["Incident Color"] = row["Card Color"]
+			if row["Card Color"] == "GREEN":
+				incidentsDict["Incident Inject Count"] = 2
+			elif row["Card Color"] == "AMBER":
+				incidentsDict["Incident Inject Count"] = 3
+			elif row["Card Color"] == "RED":
+				incidentsDict["Incident Inject Count"] = 4
+			incidentsList.append(incidentsDict)
 
 	# read inject cards
-	injectDict = {}
+	injectList = []
 	with open("Injects.csv", mode='r') as injectRead:
 		injectReader = csv.DictReader(injectRead)
 		for row in injectReader:
-			injectID = row["Inject ID"]
-			#deckID = row["Deck ID"] #probably dont need
-			injectTitle = row["Card Title"]
-			injectDescription = row["Card Wording"]
+			injectDict = {}
+			injectDict["Inject ID"] = row["Deck ID"]
+			injectDict["Inject Title"] = row["Card Title"]
+			injectDict["Inject Wording"] = row["Card Wording"]
+			injectList.append(injectDict)
 
+#DONE
 
+#---
+
+def welcome():
+	print("Welcome to HAIWIRE, a command-line based card game about 'AI Incidents' and how teams might react to the news.\n\nINSTRUCTIONS: One Incident Card is drawn per round. Each Card is assigned a color value that determines how many 'Inject Cards' are then drawn that you then have to individually address the consequences of as they pertain to the theme of the Incident. You have two minutes to come up with a plan for each Inject Card before the Die is rolled. \n\nA Die is rolled to determine whether or not your team's 'incident response' is up to muster - Cross your fingers and hope for a 10 otherwise you risk going HAIWIRE!\n\nEach round ends once all Inject Cards for that Incident have been dealt with. The game is complete once all Incidents have been addressed.\n\n**--------------**\n")
+
+#Done
 
 #---
 
@@ -38,35 +58,73 @@ def roll(injectCardsRemaining):
 		status = "HAIWIRE averted! Please draw a new Incident card."
 	return status
 
-#---
-
-def welcome():
-	"Welcome to HAIWIRE, a command-line based card game about 'AI Incidents' and how teams might react to the news.\n\nINSTRUCTIONS: One Incident Card is drawn per round. Each Card is assigned a color value that determines how many 'Inject Cards' are then drawn that you then have to individually address the consequences of as they pertain to the theme of the Incident.\n\nA Die is rolled to determine whether or not your team's 'incident response' is up to muster - Cross your fingers and hope for a 10 otherwise you risk going HAIWIRE!\n\nEach round ends once all Inject Cards for that Incident have been dealt with. The game is complete once all Incidents have been addressed.\n**--------------**\n"
-
-
-
-
 
 
 #---
-# def run():
-# 	injectCardsRemaining = 0
-# 	cardCount = len(incidentDict)
 
-# 	if injectCardsRemaining == 0:
+def drawIncident():
+	ID = int(random.randrange(1,20))
+	for datadict in incidentsList:
+		if datadict["Incident ID"] == ID:
+			ID = index(datadict["Incident ID"])
+			ID = index(datadict["Inject ID"])
+			incidentData = incidentsList.pop(ID)
+			return incidentData
+		else:
+			return None
+#DONE
 
-# 	else:
-# 		rollResult = roll(injectCardsRemaining)	
-# 		injectCardsRemaining -= 1
-# 		print(rollResult)
+#---
+
+def drawInject():
+	ID = int(random.randrange(1,40))
+	for datadict in injectList:
+		if datadict["Inject ID"] == ID:
+			ID = index(datadict["Inject ID"])
+			injectData = injectList[ID]
+			return injectData
+
+#DONE
+
+#---
+def run():
+	deckTotal = len(incidentsList)
+	while deckTotal > 0:
+		incidentData = None
+		while incidentData == None:
+			incidentData = drawIncident()
+		print("Incident Title: {}\n".format(incidentData["Incident Title"]))
+		print("Incident Description: {}\n".format(incidentData["Incident Description"]))
+		print("Incident Technology: {}\n".format(incidentData["Incident Tech"]))
+		print("Incident Domain: {}\n".format(incidentData["Incident Domain"]))
+		print("Incident Harm: {}\n\n".format(incidentData["Incident Harm"]))
+		color = incidentData["Incident Color"]
+		injectTotal = incidentData["Incident Inject Count"]
+
+			incidentsDict['Played'] = False I guess I dont need this if Im popping the dict?
+
+
+
+		injectTotal = incidentData["Incident Inject Count"]
+		print("Discuss your Response Plan and then draw {} injects. Press 'Enter/Return' to draw an Inject Card.\n\n".format(str(injectTotal)))
+		input = ""
+		
+		while injectCount < injectTotal:
+			injectData = drawInject()
+			injectCount+=1
+			print("Discuss the Inject Card, updating or reformulating your response strategy. You have two minutes starting *now*.")
+			time.sleep(120)
+			print()
+
+
+		print(rollResult)
 
 
 #---
 
 init()
 welcome()
-exit()
-# run()
+run()
 
 
 
@@ -96,13 +154,12 @@ exit()
 
 
 # Game steps:
-- start game
-- "press enter to draw an incident card"
-- read card to CLI, reset inject counter, determine inject card count and print the inject count
-- input stop
-- press enter to draw inject card, increment counter, print card to CLI
-- begin 2 minute timer
-- input stop
-- prompt player to hit enter to roll a die
-- generate random # 1-10
-- display result
+
+# - read card to CLI, reset inject counter, determine inject card count and print the inject count
+# - input stop
+# - press enter to draw inject card, increment counter, print card to CLI
+# - begin 2 minute timer
+# - input stop
+# - prompt player to hit enter to roll a die
+# - generate random # 1-10
+# - display result
