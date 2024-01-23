@@ -15,7 +15,6 @@ def init():
 			incidentsDict["Incident Tech"] = row["AI Stack"]
 			incidentsDict["Incident Domain"] = row["Domain"]
 			incidentsDict["Incident Harm"] = row["Harm"]
-			incidentsDict['Played'] = False
 			incidentsDict["Incident Color"] = row["Card Color"]
 			if row["Card Color"] == "GREEN":
 				incidentsDict["Incident Inject Count"] = 2
@@ -47,7 +46,7 @@ def welcome():
 
 #---
 
-def roll(injectCardsRemaining):
+def roll():
 	result = int(math.random(1,10))
 	if rollResult < 7:
 		haiwireCount +=1
@@ -90,6 +89,9 @@ def drawInject():
 def run():
 	deckTotal = len(incidentsList)
 	while deckTotal > 0:
+		deckTotal -= 1
+		
+		#start round
 		incidentData = None
 		while incidentData == None:
 			incidentData = drawIncident()
@@ -98,23 +100,28 @@ def run():
 		print("Incident Technology: {}\n".format(incidentData["Incident Tech"]))
 		print("Incident Domain: {}\n".format(incidentData["Incident Domain"]))
 		print("Incident Harm: {}\n\n".format(incidentData["Incident Harm"]))
-		color = incidentData["Incident Color"]
+		print("Incident Severity: {}".format(incidentData["Incident Color"]))
+		print()
 		injectTotal = incidentData["Incident Inject Count"]
-
-			incidentsDict['Played'] = False I guess I dont need this if Im popping the dict?
-
-
-
-		injectTotal = incidentData["Incident Inject Count"]
-		print("Discuss your Response Plan and then draw {} injects. Press 'Enter/Return' to draw an Inject Card.\n\n".format(str(injectTotal)))
+		print("Discuss your Response Plan and then draw {} injects. Press 'Enter/Return' to draw an Inject Card.\n\n\n".format(str(injectTotal)))
 		input = ""
 		
+		#start inject card draw
+		injectCount = 0
 		while injectCount < injectTotal:
 			injectData = drawInject()
 			injectCount+=1
+			print("Inject Card Title: {}".format(injectData["Inject Title"]))
+			print("Inject Card Description: {}".format(injectData["Inject Wording"]))
+			print()
 			print("Discuss the Inject Card, updating or reformulating your response strategy. You have two minutes starting *now*.")
 			time.sleep(120)
 			print()
+
+			#roll
+			injectRemaining = injectTotal - injectCount #4-1 = 3
+			roll(injectCardsRemaining)
+
 
 
 		print(rollResult)
@@ -155,10 +162,6 @@ run()
 
 # Game steps:
 
-# - read card to CLI, reset inject counter, determine inject card count and print the inject count
-# - input stop
-# - press enter to draw inject card, increment counter, print card to CLI
-# - begin 2 minute timer
 # - input stop
 # - prompt player to hit enter to roll a die
 # - generate random # 1-10
