@@ -49,7 +49,7 @@ def welcome():
 #---
 
 def roll():
-	rollResult = int(random.randrange(1,10))
+	rollResult = int(random.randint(1,10))
 	time.sleep(2)
 	print("You rolled a {}".format(str(rollResult)))
 	time.sleep(1)
