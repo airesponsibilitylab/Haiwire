@@ -53,7 +53,7 @@ def roll():
 	time.sleep(2)
 	print("You rolled a {}".format(str(rollResult)))
 	time.sleep(1)
-	statusMessage = "fmndklgmdfgkld FAILURE AT STATUS MESSAGE"
+	statusMessage = "FAILURE AT STATUS MESSAGE"
 	if rollResult < 7:
 		haiwireVal = 1
 		statusMessage = "Incident response failed, your HAIWIRE risk has increased! Press 'Enter/Return' to draw a new Inject Card."
